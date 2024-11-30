@@ -10,7 +10,6 @@ export const createBlog = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "title and slug is required" });
   }
   if (!file) return res.status(400).json({ message: "Image is required" });
-
   const existingBlog = await BlogModel.findOne({ slug });
 
   if (existingBlog) {
@@ -19,12 +18,15 @@ export const createBlog = asyncHandler(async (req, res) => {
       .json({ message: "Blog already exists with the same slug" });
   }
 
+  let uploadImage = await ImageUpload(file);
+
   const data = await BlogModel.create({
     title,
     slug,
     alt,
     description,
-    user_id: req.user._id,
+    image: uploadImage,
+    user_id: req?.user?._id,
   });
 
   return res.status(200).json({ data, message: "Blog Created successfully" });
