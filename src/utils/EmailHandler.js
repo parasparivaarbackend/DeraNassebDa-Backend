@@ -1,6 +1,5 @@
 import mailer from "nodemailer"
-import dotenv from "dotenv";
-dotenv.config();
+
 
 export function SendMail(item) {
     

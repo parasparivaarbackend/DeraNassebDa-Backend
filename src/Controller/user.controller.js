@@ -2,8 +2,7 @@ import { UserModel } from "../Model/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import { SendMail } from "../utils/EmailHandler.js";
-import dotenv from "dotenv";
-dotenv.config();
+
 
 let ChangePasswordOtp = null
 let OTP = null
@@ -17,7 +16,7 @@ export const Login = asyncHandler(async (req, res) => {
 
   const find = await UserModel.findOne({ email });
   if (!find) return res.status(400).json({ message: "user do not exist" });
-  delete find.password
+  // delete find.password
 
 
   const check = await find?.checkPassword(password);

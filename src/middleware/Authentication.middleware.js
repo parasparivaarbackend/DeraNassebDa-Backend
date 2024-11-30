@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { UserModel } from "../Model/user.model.js";
-import dotenv from "dotenv";
-dotenv.config();
+
 
 
 
@@ -15,7 +14,7 @@ export const auth = asyncHandler(async (req, res, next) => {
     }
     try {
 
-        const decodedToken = await jwt.verify(token, process.env.JWT_SECRET)
+        const decodedToken =  jwt.verify(token, process.env.JWT_SECRET)
 
         if (!decodedToken) {
             res.status(404).json({ message: "Invalid Cookies" })
