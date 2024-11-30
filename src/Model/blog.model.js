@@ -22,7 +22,6 @@ const BlogSchema = new Schema(
       type: String,
       trim: true,
       required: true,
-      unique: true,
     },
     image: [
       {
@@ -42,7 +41,6 @@ const BlogSchema = new Schema(
       type: String,
       trim: true,
       required: true,
-      unique: true,
     },
   },
   { timestamps: true }
