@@ -1,6 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { BlogModel } from "../Model/blog.model.js";
-import { InnerBlogModel } from "../Model/InnerBlog.model.js";
 import { DeleteImage } from "../utils/ImageHandler.js";
 
 export const createBlog = asyncHandler(async (req, res) => {
