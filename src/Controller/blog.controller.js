@@ -44,10 +44,10 @@ export const updateBlog = asyncHandler(async (req, res) => {
     await DeleteImage(blog?.image?.[0]?.image_id);
     uploadImage = await ImageUpload(file);
     blog.image = uploadImage;
-    blog.alt = alt;
-    blog.description = description;
-    blog.title = title;
-    blog.slug = slug;
+    blog.alt = data?.alt;
+    blog.description = data?.description;
+    blog.title = data?.title;
+    blog.slug = data?.slug;
     await blog.save();
     return res.status(200).json({ message: "Blog updated successfully" });
   }
