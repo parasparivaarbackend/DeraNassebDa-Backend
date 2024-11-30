@@ -98,3 +98,7 @@ export const deleteBlog = asyncHandler(async (req, res) => {
 
   return res.status(200).json({ message: "Blog deleted successfully" });
 });
+
+export const deleteImageManual = asyncHandler(async (req, res) => {
+  await DeleteImage(req.body.id);
+});

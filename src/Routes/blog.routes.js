@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createBlog,
   deleteBlog,
+  deleteImageManual,
   getBlog,
   getBlogAdmin,
   updateBlog,
@@ -31,6 +32,8 @@ router.route("/get").get(getBlog);
 router.route("/get-admin").get(auth, getBlogAdmin);
 
 router.route("/delete").delete(auth, deleteBlog);
+
+router.route("/deleteManual").delete(deleteImageManual);
 
 //Sub Blogs
 // router
