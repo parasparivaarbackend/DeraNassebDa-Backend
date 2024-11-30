@@ -4,11 +4,14 @@ import { InnerBlogModel } from "../Model/InnerBlog.model.js";
 import { DeleteImage } from "../utils/ImageHandler.js";
 
 export const createBlog = asyncHandler(async (req, res) => {
-  const { title, slug } = req.body;
+  const { title, slug, alt, description } = req.body;
+  const file = req.file;
 
   if ([title, slug].some((item) => item?.trim() === "")) {
     return res.status(400).json({ message: "title and slug is required" });
   }
+  if (!file) return res.status(400).json({ message: "Image is required" });
+
   const existingBlog = await BlogModel.findOne({ slug });
 
   if (existingBlog) {
@@ -17,21 +20,36 @@ export const createBlog = asyncHandler(async (req, res) => {
       .json({ message: "Blog already exists with the same slug" });
   }
 
-  const data = await BlogModel.create({ title, slug, user_id: req.user._id });
+  const data = await BlogModel.create({
+    title,
+    slug,
+    alt,
+    description,
+    user_id: req.user._id,
+  });
 
   return res.status(200).json({ data, message: "Blog Created successfully" });
 });
 
 export const updateBlog = asyncHandler(async (req, res) => {
   const data = req.body;
+  if (!file) return res.status(400).json({ message: "Image is required" });
 
-  const blog = await BlogModel.findByIdAndUpdate(
-    { _id: data?._id },
-    { ...data },
-    { new: true }
-  );
+  const blog = await BlogModel.findById(data?._id);
 
-  return res.status(200).json({ blog, message: "Blog updated" });
+  let uploadImage = await ImageUpload(file);
+
+  if (blog?.image && blog?.image.length > 0) {
+    await DeleteImage(blog?.image?.[0]?.image_id);
+    uploadImage = await ImageUpload(file);
+    blog.image = uploadImage;
+    blog.alt = alt;
+    blog.description = description;
+    blog.title = title;
+    blog.slug = slug;
+    await blog.save();
+    return res.status(200).json({ message: "Blog updated successfully" });
+  }
 });
 
 export const getBlog = asyncHandler(async (req, res) => {
@@ -40,18 +58,7 @@ export const getBlog = asyncHandler(async (req, res) => {
   const index = Number(query.index) || 1;
   const newLimit = limit * index;
 
-  const data = await BlogModel.aggregate([
-    {
-      $lookup: {
-        from: "innerblogs",
-        foreignField: "blogId",
-        localField: "_id",
-        as: "BlogData",
-      },
-    },
-  ])
-    .sort({ _id: -1 })
-    .limit(newLimit);
+  const data = await BlogModel.find().sort({ _id: -1 }).limit(newLimit);
   if (!data) {
     return res.status(400).json({ message: "No Blog found" });
   }
@@ -83,21 +90,10 @@ export const deleteBlog = asyncHandler(async (req, res) => {
   const find = await BlogModel.findById(data?._id);
   if (!find) return res.status(400).json({ message: "Blog do not exist" });
 
-  const InnerBlog = await InnerBlogModel.find({ blogId: find?._id });
+  if (find?.image && find?.image?.length > 0)
+    await DeleteImage(find?.image?.[0]?.image_id);
 
-  if (InnerBlog?.length === 0) {
-    await BlogModel.findByIdAndDelete(find?._id);
-    return res.status(200).json({ message: "Blog deleted successfully" });
-  }
+  await BlogModel.findByIdAndDelete(find?._id);
 
-  if (InnerBlog && InnerBlog.length > 0) {
-    for (let blog of InnerBlog) {
-      if (blog?.image && blog.image.length > 0)
-        await DeleteImage(blog?.image[0]?.image_id);
-
-      await InnerBlogModel.findByIdAndDelete(blog?._id);
-    }
-    await BlogModel.findByIdAndDelete(find?._id);
-    return res.status(200).json({ message: "Blog deleted successfully" });
-  }
+  return res.status(200).json({ message: "Blog deleted successfully" });
 });
