@@ -38,21 +38,16 @@ export const updateBlog = asyncHandler(async (req, res) => {
 
   const blog = await BlogModel.findById(data?._id);
 
-  let uploadImage;
-
   if (file) {
-    if (blog?.image && blog?.image.length > 0) {
-      console.log("case1");
-      await DeleteImage(blog?.image?.[0]?.image_id);
-      uploadImage = await ImageUpload(file);
-      await BlogModel.findByIdAndUpdate(
-        { _id: blog?._id },
-        { ...data, image: uploadImage }
-      );
-      return res
-        .status(200)
-        .json({ message: "Blog and Image updated successfully" });
-    }
+    await DeleteImage(blog?.image?.[0]?.image_id);
+    const uploadImage = await ImageUpload(file);
+    await BlogModel.findByIdAndUpdate(
+      { _id: blog?._id },
+      { ...data, image: uploadImage }
+    );
+    return res
+      .status(200)
+      .json({ message: "Blog and Image updated successfully" });
   } else {
     console.log("case2");
     await BlogModel.findByIdAndUpdate({ _id: blog?._id }, { ...data });
