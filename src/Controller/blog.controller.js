@@ -34,21 +34,28 @@ export const createBlog = asyncHandler(async (req, res) => {
 
 export const updateBlog = asyncHandler(async (req, res) => {
   const data = req.body;
-  if (!file) return res.status(400).json({ message: "Image is required" });
+  const file = req.file;
 
   const blog = await BlogModel.findById(data?._id);
 
-  let uploadImage = await ImageUpload(file);
+  let uploadImage;
 
-  if (blog?.image && blog?.image.length > 0) {
-    await DeleteImage(blog?.image?.[0]?.image_id);
-    uploadImage = await ImageUpload(file);
-    blog.image = uploadImage;
-    blog.alt = data?.alt;
-    blog.description = data?.description;
-    blog.title = data?.title;
-    blog.slug = data?.slug;
-    await blog.save();
+  if (file) {
+    if (blog?.image && blog?.image.length > 0) {
+      console.log("case1");
+      await DeleteImage(blog?.image?.[0]?.image_id);
+      uploadImage = await ImageUpload(file);
+      await BlogModel.findByIdAndUpdate(
+        { _id: blog?._id },
+        { ...data, image: uploadImage }
+      );
+      return res
+        .status(200)
+        .json({ message: "Blog and Image updated successfully" });
+    }
+  } else {
+    console.log("case2");
+    await BlogModel.findByIdAndUpdate({ _id: blog?._id }, { ...data });
     return res.status(200).json({ message: "Blog updated successfully" });
   }
 });
