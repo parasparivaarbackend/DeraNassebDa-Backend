@@ -1,14 +1,14 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
+import dotenv from "dotenv";
+dotenv.config();
 
 const PORT = process.env.PORT;
 const app = express();
 
-// CORS configuration
 const corsOptions = {
-  origin: "http://localhost:5173", // React app's address
+  origin: "http://localhost:5173",
   credentials: true,
 };
 app.use(cors(corsOptions));

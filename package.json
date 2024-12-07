@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "server": "pm2 start --name='DeraNaseebDa' -r dotenv/config  src/index.js",
     "start": "node -r dotenv/config src/index.js",
     "dev": "nodemon -r dotenv/config src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"

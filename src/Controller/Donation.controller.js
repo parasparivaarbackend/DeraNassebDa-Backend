@@ -1,6 +1,8 @@
 import Razorpay from "razorpay";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { DonationModel } from "../Model/Donation.model.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 let razorpay = new Razorpay({
   key_id: process.env.PAYMENT_KEY_ID,
