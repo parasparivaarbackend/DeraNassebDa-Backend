@@ -33,6 +33,7 @@ export const BlogValidationSchema = vine.object({
   slug: vine.string().minLength(2).maxLength(50),
   alt: vine.string().minLength(2).maxLength(50),
   description: vine.string().minLength(2),
+  metaDescription: vine.string().minLength(2),
 });
 
 export const InnerBlogValidationSchema = vine.object({

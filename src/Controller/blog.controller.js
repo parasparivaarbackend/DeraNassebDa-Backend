@@ -3,7 +3,7 @@ import { BlogModel } from "../Model/blog.model.js";
 import { DeleteImage, ImageUpload } from "../utils/ImageHandler.js";
 
 export const createBlog = asyncHandler(async (req, res) => {
-  const { title, slug, alt, description } = req.body;
+  const { title, slug, alt, description, metaDescription } = req.body;
   const file = req.file;
 
   if ([title, slug].some((item) => item?.trim() === "")) {
@@ -25,6 +25,7 @@ export const createBlog = asyncHandler(async (req, res) => {
     slug,
     alt,
     description,
+    metaDescription,
     image: uploadImage,
     user_id: req?.user?._id,
   });

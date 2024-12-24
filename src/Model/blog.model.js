@@ -23,6 +23,11 @@ const BlogSchema = new Schema(
       trim: true,
       required: true,
     },
+    metaDescription:{
+      type: String,
+      trim: true,
+      required: true,
+    },
     image: [
       {
         image_url: {
